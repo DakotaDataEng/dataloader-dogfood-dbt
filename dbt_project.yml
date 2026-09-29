@@ -1,0 +1,14 @@
+name: dogfood
+version: "1.0.0"
+config-version: 2
+profile: dataloader
+model-paths: ["models"]
+
+# No custom schema: everything builds into the target's schema (dl_dbt),
+# which the project's target in DataLoader sets.
+models:
+  dogfood:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

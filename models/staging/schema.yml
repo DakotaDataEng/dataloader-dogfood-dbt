@@ -1,0 +1,61 @@
+version: 2
+
+models:
+  - name: stg_customers
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+      - name: country
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["CA", "US", "GB", "DE", "AU", "MX"]
+      - name: segment
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["Enterprise", "Mid-market", "Small business", "Public sector"]
+
+  - name: stg_orders
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: customer_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["placed", "paid", "shipped", "delivered", "cancelled"]
+      - name: currency
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["CAD", "USD", "EUR"]
+
+  - name: stg_order_events
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: event_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["created", "payment_received", "shipped", "delivered"]
+
+  - name: stg_products
+    columns:
+      - name: product_code
+        data_tests: [unique, not_null]

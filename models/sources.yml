@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: dl_test
+    description: Invented test tables that DataLoader loads from a SQL Server sandbox every day at 06:00 America/Denver.
+    database: dataloader_v2_dogfood
+    schema: dl_test
+    tables:
+      - name: customers
+      - name: orders
+        config:
+          loaded_at_field: modified_at
+          freshness:
+            warn_after: {count: 26, period: hour}
+            error_after: {count: 50, period: hour}
+      - name: order_events
+      - name: products
