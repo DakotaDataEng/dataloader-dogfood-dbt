@@ -19,3 +19,15 @@ models:
           - accepted_values:
               arguments:
                 values: ["CAD", "USD", "EUR"]
+
+  - name: mart_customer_360
+    description: One row per customer. Customer fields, order counts by status, total and average order amount, first and last order times, and days with orders. Amounts add up across currencies. Customers with no orders have zero counts.
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+      - name: customer_name
+        data_tests: [not_null]
+      - name: country
+        data_tests: [not_null]
+      - name: segment
+        data_tests: [not_null]

@@ -10,7 +10,23 @@ It exists to show dbt runs, the asset graph and automation conditions working on
 - `models/sources.yml`: the source `dl_test` (`dataloader_v2_dogfood.dl_test`) with `customers`, `orders`, `order_events` and `products`. `orders` has a freshness check on `modified_at` (warn after 26 hours, error after 50).
 - `models/staging/`: one view per source table. They cast types and rename nothing else, with no business logic.
 - `models/marts/fct_daily_orders_by_customer.sql`: a table with orders, delivered orders, cancelled orders and total amount per customer, order date and currency.
+- `models/intermediate/int_order_lifecycle.sql`: a view with one row per order, joining `stg_orders` to `stg_order_events`. It carries a timestamp for each lifecycle step, the latest event and the event count.
+- `models/marts/mart_customer_360.sql`: a table with one row per customer. Order counts by status, order amounts, first and last order times and days with orders.
 - Tests in each `schema.yml`: unique and not null on keys, relationships (orders to customers, order events to orders), and accepted values for `status`, `event_type`, `currency`, `country` and `segment`.
+
+## Layers and the fan-in
+
+Four source tables feed four staging views. Three of them meet in `mart_customer_360`:
+
+```
+customers    -> stg_customers ------------------------------------+
+orders       -> stg_orders -+-> int_order_lifecycle ---------------+-> mart_customer_360
+order_events -> stg_order_events -+                                |
+                    stg_orders ---> fct_daily_orders_by_customer --+
+products     -> stg_products   (no key links it to orders or customers)
+```
+
+`products` has no column that ties it to an order or a customer, so it stays a standalone branch.
 
 Models build into the schema `dl_dbt`, which comes from the project's target in DataLoader.
 

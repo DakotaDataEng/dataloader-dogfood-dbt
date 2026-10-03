@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: int_order_lifecycle
+    description: One row per order. Joins each order to its events, with the time of each lifecycle step (placed, paid, shipped, delivered), the latest event and the event count. Orders with no events have an event count of 0.
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: customer_id
+        data_tests: [not_null]
+      - name: order_date
+        data_tests: [not_null]
+      - name: status
+        data_tests: [not_null]
