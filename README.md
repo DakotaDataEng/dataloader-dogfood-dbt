@@ -12,6 +12,7 @@ It exists to show dbt runs, the asset graph and automation conditions working on
 - `models/marts/fct_daily_orders_by_customer.sql`: a table with orders, delivered orders, cancelled orders and total amount per customer, order date and currency.
 - `models/intermediate/int_order_lifecycle.sql`: a view with one row per order, joining `stg_orders` to `stg_order_events`. It carries a timestamp for each lifecycle step, the latest event and the event count.
 - `models/marts/mart_customer_360.sql`: a table with one row per customer. Order counts by status, order amounts, first and last order times and days with orders.
+- `models/marts/fct_order_events.sql`: an incremental table with one row per order event. Each run merges the events at or after the latest one it already holds, keyed on `event_id`, and new columns are appended.
 - Tests in each `schema.yml`: unique and not null on keys, relationships (orders to customers, order events to orders), and accepted values for `status`, `event_type`, `currency`, `country` and `segment`.
 
 ## Layers and the fan-in
@@ -24,6 +25,7 @@ orders       -> stg_orders -+-> int_order_lifecycle ---------------+-> mart_cust
 order_events -> stg_order_events -+                                |
                     stg_orders ---> fct_daily_orders_by_customer --+
 products     -> stg_products   (no key links it to orders or customers)
+stg_order_events -> fct_order_events   (incremental)
 ```
 
 `products` has no column that ties it to an order or a customer, so it stays a standalone branch.

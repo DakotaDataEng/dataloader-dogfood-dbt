@@ -31,3 +31,13 @@ models:
         data_tests: [not_null]
       - name: segment
         data_tests: [not_null]
+
+  - name: fct_order_events
+    description: One row per order event, built incrementally. Each run merges the events at or after the latest one already loaded.
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+      - name: order_id
+        data_tests: [not_null]
+      - name: event_at
+        data_tests: [not_null]
