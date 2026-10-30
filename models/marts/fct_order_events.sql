@@ -4,7 +4,8 @@ select
     event_id,
     order_id,
     event_type,
-    event_at
+    event_at,
+    note
 from {{ ref('stg_order_events') }}
 {% if is_incremental() %}
 where event_at >= (select max(event_at) from {{ this }})
