@@ -6,6 +6,7 @@ select
     count(*) as orders,
     count_if(status = 'delivered') as delivered_orders,
     count_if(status = 'cancelled') as cancelled_orders,
-    sum(amount) as total_amount
+    sum(amount) as total_amount,
+    avg(amount) as avg_amount
 from {{ ref('stg_orders') }}
 group by customer_id, order_date, currency
